@@ -1,6 +1,8 @@
-﻿namespace BlogTalks.Domain.Entities
+﻿using BlogTalks.Domain.Shared;
+
+namespace BlogTalks.Domain.Entities
 {
-    public class Comment
+    public class Comment : IEntity
     {
         public int Id { get; set; }
         public string Text { get; set; } = string.Empty;

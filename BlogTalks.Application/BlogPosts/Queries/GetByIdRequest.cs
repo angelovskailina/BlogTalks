@@ -2,6 +2,6 @@
 
 namespace BlogTalks.Application.BlogPosts.Queries
 {
-    public record GetByIdRequest(int id) : IRequest<GetByIdResponse>;
-    
+    public record GetByIdRequest(int Id) : IRequest<GetByIdResponse>;
+
 }

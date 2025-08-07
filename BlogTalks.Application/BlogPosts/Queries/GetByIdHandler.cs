@@ -1,22 +1,23 @@
-﻿using MediatR;
+﻿using BlogTalks.Domain.Repositories;
+using MediatR;
 
 namespace BlogTalks.Application.BlogPosts.Queries
 {
     public class GetByIdHandler : IRequestHandler<GetByIdRequest, GetByIdResponse>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly IBlogPostRepository _blogPostRepository;
 
-        public GetByIdHandler(FakeDataStore fakeDataStore)
+        public GetByIdHandler(IBlogPostRepository blogPostRepository)
         {
-            _fakeDataStore = fakeDataStore;
+            _blogPostRepository = blogPostRepository;
         }
 
         public async Task<GetByIdResponse> Handle(GetByIdRequest request, CancellationToken cancellationToken)
         {
-            var blogPost = _fakeDataStore.GetBlogPostById(request.id);
+            var blogPost = _blogPostRepository.GetById(request.Id);
             if (blogPost == null)
             {
-                throw new Exception("The blogpost is null");
+                return null;
             }
             return new GetByIdResponse
             {
@@ -28,7 +29,7 @@ namespace BlogTalks.Application.BlogPosts.Queries
                 Tags = blogPost.Tags,
                 Comments = blogPost.Comments,
             };
-           
+
         }
     }
 }

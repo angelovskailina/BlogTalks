@@ -1,5 +1,6 @@
+using BlogTalks.API;
 using BlogTalks.Application;
-using BlogTalks.Application.Comments.Queries;
+using BlogTalks.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,19 +14,16 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.FullName);
 });
-builder.Services.AddSingleton<FakeDataStore>();
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllByBlogPostIdHandler).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetByIdResponse).Assembly);
-});
+//builder.Services.AddSingleton<FakeDataStore>();
+
+builder.Services
+        .AddPresentation()
+        .AddApplication()
+        .AddInfrastructure(builder.Configuration);
 
 
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

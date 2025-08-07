@@ -7,5 +7,8 @@
         public int CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public int BlogPostID { get; set; }
+
+
+        // drugite ne vrakjaat nisho 
     }
 }

@@ -1,41 +1,40 @@
-﻿using MediatR;
+﻿using BlogTalks.Domain.Repositories;
+using MediatR;
 
 namespace BlogTalks.Application.Comments.Commands
 {
     public class UpdateHandler : IRequestHandler<UpdateRequest, UpdateResponse>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        public readonly ICommentRepository _commentRepository;
 
-        public UpdateHandler(FakeDataStore fakeDataStore)
+        public UpdateHandler(ICommentRepository commentRepository)
         {
-            _fakeDataStore = fakeDataStore;
+            _commentRepository = commentRepository;
         }
 
         public async Task<UpdateResponse> Handle(UpdateRequest request, CancellationToken cancellationToken)
         {
-            var comment = _fakeDataStore.GetCommentsById(request.Id);
+            var comment = _commentRepository.GetById(request.Id);
+
             if (comment == null)
             {
-                throw new Exception("Comment is null");
-                //return null;
+                return null;
             }
-
-            comment.Id = request.Id;
             comment.Text = request.Text;
             comment.CreatedAt = DateTime.UtcNow;
-            comment.CreatedBy = request.CreatedBy;
-            comment.BlogPostID = request.BlogPostId;
 
-            var updatedComment = await _fakeDataStore.UpdateComment(comment);
+             _commentRepository.Update(comment);
 
             return new UpdateResponse
             {
-                Id = updatedComment.Id,
-                Text = updatedComment.Text,
-                CreatedAt = updatedComment.CreatedAt,
-                CreatedBy = updatedComment.CreatedBy,
-                BlogPostID = updatedComment.BlogPostID,
+                Id = comment.Id,
+                Text = comment.Text,
+                CreatedAt = comment.CreatedAt,
+                CreatedBy = comment.CreatedBy,
+                BlogPostID = comment.BlogPostID,
             };
+            //return Task.FromResult(new UpdateResponse());
+
         }
     }
 }

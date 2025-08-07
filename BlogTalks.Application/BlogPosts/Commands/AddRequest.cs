@@ -2,6 +2,6 @@
 
 namespace BlogTalks.Application.BlogPosts.Commands
 {
-    public record AddRequest(AddResponse response) : IRequest<AddResponse>;
-   
+    public record AddRequest(string Title, string Text, List<string> Tags) : IRequest<AddResponse>;
+
 }

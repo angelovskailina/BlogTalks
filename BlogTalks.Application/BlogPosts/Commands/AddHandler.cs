@@ -1,32 +1,33 @@
 ﻿using BlogTalks.Domain.Entities;
+using BlogTalks.Domain.Repositories;
 using MediatR;
 
 namespace BlogTalks.Application.BlogPosts.Commands
 {
     public class AddHandler : IRequestHandler<AddRequest, AddResponse>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly IBlogPostRepository _blogPostRepository;
 
-        public AddHandler(FakeDataStore fakeDataStore)
+        public AddHandler(IBlogPostRepository blogPostRepository)
         {
-            _fakeDataStore = fakeDataStore;
+            _blogPostRepository = blogPostRepository;
         }
 
         public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
-        { 
+        {
+
             var blogPost = new BlogPost
             {
-                Id = request.response.Id,
-                Title = request.response.Title,
-                Text = request.response.Text,
-                CreatedAt = request.response.CreatedAt,
-                CreatedBy = request.response.CreatedBy,
-                Tags = request.response.Tags,
-                Comments = request.response.Comments,
+                Title = request.Title,
+                Text = request.Text,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = 55,
+                Tags = request.Tags,
+                
             };
-            await _fakeDataStore.AddBlogPost(blogPost);
-            return request.response;
+            _blogPostRepository.Add(blogPost);
+            return new AddResponse { Id = blogPost.Id };
         }
-        
+
     }
 }
