@@ -1,21 +1,24 @@
-﻿using MediatR;
+﻿using BlogTalks.Domain.Repositories;
+using MediatR;
 
 namespace BlogTalks.Application.Comments.Queries
 {
     public class GetByIdHandler : IRequestHandler<GetByIdRequest, GetByIdResponse>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly ICommentRepository _commentRepository;
 
-        public GetByIdHandler(FakeDataStore fakeDataStore) => _fakeDataStore = fakeDataStore;
+        public GetByIdHandler(ICommentRepository commentRepository)
+        {
+            _commentRepository = commentRepository;
+        }
 
         public async Task<GetByIdResponse> Handle(GetByIdRequest request, CancellationToken cancellationToken)
         {
-            var comment =  _fakeDataStore.GetCommentsById(request.id);
+            var comment =  _commentRepository.GetById(request.id);
 
             if (comment == null)
             {
-                throw new Exception("Comment is null.");
-                //inicijalno treba da se frli Not Found() vo kontrolerot;
+                return null; 
             }
             return new GetByIdResponse
             {

@@ -1,29 +1,33 @@
-﻿using MediatR;
+﻿using BlogTalks.Domain.Repositories;
+using MediatR;
 
 namespace BlogTalks.Application.Comments.Queries
 {
     public class GetAllByBlogPostIdHandler : IRequestHandler<GetAllByBlogPostIdRequest, List<GetAllByBlogPostIdResponse>>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly ICommentRepository _commentRepository;
 
-        public GetAllByBlogPostIdHandler(FakeDataStore fakeDataStore) => _fakeDataStore = fakeDataStore;
+        public GetAllByBlogPostIdHandler(ICommentRepository commentRepository)
+        {
+            _commentRepository = commentRepository;
+        }
 
         public Task<List<GetAllByBlogPostIdResponse>> Handle(GetAllByBlogPostIdRequest request, CancellationToken cancellationToken)
         {
-            var blogPost = _fakeDataStore.GetBlogPostById(request.Id);
+            var comments = _commentRepository.GetCommentsByBlogPostId(request.blogPostId);
 
-            if (blogPost == null)
+            if (comments == null)
             {
-                throw new Exception("Blogpost doesn't exits");
+                return null;
             }
 
-            var response = blogPost.Comments.Select(comments => new GetAllByBlogPostIdResponse
+            var response = comments.Select(comments => new GetAllByBlogPostIdResponse
             {
                 Id = comments.Id,
                 Text = comments.Text,
                 CreatedAt = comments.CreatedAt,
                 CreatedBy = comments.CreatedBy,
-                BlogPostId = blogPost.Id,
+                BlogPostId = comments.BlogPostID,
             }).ToList();
 
             return Task.FromResult(response);

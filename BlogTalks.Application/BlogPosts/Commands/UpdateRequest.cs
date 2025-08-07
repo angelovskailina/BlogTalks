@@ -1,8 +1,9 @@
 ﻿using BlogTalks.Domain.Entities;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace BlogTalks.Application.BlogPosts.Commands
 {
-    public record UpdateRequest(int Id,string Title,string Text,int CreatedBy,DateTime CreatedAt,List<string> Tags, List<Comment> Comments) : IRequest<UpdateResponse>;
-    
+    public record UpdateRequest([property: JsonIgnore] int Id, string Title,string Text, List<string> Tags) : IRequest<UpdateResponse>;
+
 }

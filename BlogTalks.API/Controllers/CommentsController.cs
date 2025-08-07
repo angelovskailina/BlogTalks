@@ -16,71 +16,66 @@ namespace BlogTalks.API.Controllers
 
 
         // GET: api/<CommentsController>
-        [HttpGet("blogpost/{id}/comments", Name = "GetCommentsByBlogPostId")]
-        public async Task<ActionResult> Get([FromRoute] int id)
+        [HttpGet("blogpost/{id}/comments")]
+        public async Task<ActionResult> GetByBlogPostId([FromRoute] int id)
         {
-            try
-            {
-                var comments = await _mediator.Send(new GetAllByBlogPostIdRequest(id));
-                return Ok(comments);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }// custom ex vo entities 
+            var comments = await _mediator.Send(new GetAllByBlogPostIdRequest(id));
+            return Ok(comments);
         }
 
 
         // GET api/<CommentsController>/5
         [HttpGet("{id}", Name = "GetCommentById")]
-        public async Task<ActionResult> Get([FromRoute] GetByIdRequest request)
+        public async Task<ActionResult> Get([FromRoute] int id)
         {
-            try
-            {
-                var comment = await _mediator.Send(new GetByIdRequest(request.id));
-
-                return Ok(comment);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var comment = await _mediator.Send(new GetByIdRequest(id));
+            return Ok(comment);
         }
+
+        // GET api/<CommentsController>/5
+        //[HttpGet]
+        //public async Task<ActionResult> GetAll()
+        //{
+
+        //    var comment = await _mediator.Send(new GetAllRe;
+
+        //    return Ok(comment);
+
+        //}
 
         // POST api/<CommentsController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] AddResponse response)
+        public async Task<ActionResult> Post([FromBody] AddRequest request)
         {
-            await _mediator.Send(new AddRequest(response));
+            var response = await _mediator.Send(request);
+            if (response == null)
+            {
+                return NotFound();
+            }
             return Ok(response);
         }
 
         // PUT api/<CommentsController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] UpdateRequest request)
+        public ActionResult Put([FromRoute] int id, [FromBody] UpdateRequest request)
         {
-            try
+            var response = _mediator.Send(new UpdateRequest(id, request.Text));
+            if (response == null)
             {
-                var updatedComment = _mediator.Send(request);
-                return Ok(updatedComment.Result);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NoContent();
+
         }
 
         // DELETE api/<CommentsController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
-            try
+            var response = await _mediator.Send(new DeleteRequest(id));
+            if (response == null)
             {
-                var comment = await _mediator.Send(new DeleteRequest(id));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
             return NoContent();
         }

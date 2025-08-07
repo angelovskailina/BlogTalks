@@ -1,43 +1,33 @@
-﻿using MediatR;
+﻿using BlogTalks.Domain.Repositories;
+using MediatR;
 
 namespace BlogTalks.Application.BlogPosts.Commands
 {
     public class UpdateHandler : IRequestHandler<UpdateRequest, UpdateResponse>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly IBlogPostRepository _blogPostRepository;
 
-        public UpdateHandler(FakeDataStore fakeDataStore)
+        public UpdateHandler(IBlogPostRepository blogPostRepository)
         {
-            _fakeDataStore = fakeDataStore;
+            _blogPostRepository = blogPostRepository;
         }
 
         public async Task<UpdateResponse> Handle(UpdateRequest request, CancellationToken cancellationToken)
         {
-            var blogPost = _fakeDataStore.GetBlogPostById(request.Id);
+            var blogPost = _blogPostRepository.GetById(request.Id);
             if (blogPost == null)
             {
-                throw new Exception("BlogPost is null");
+                return null;
             }
-            blogPost.Id = request.Id;
+
             blogPost.Title = request.Title;
             blogPost.Text = request.Text;
-            blogPost.CreatedAt = request.CreatedAt;
-            blogPost.CreatedBy = request.CreatedBy;
+            //blogPost.CreatedAt = DateTime.UtcNow;
             blogPost.Tags = request.Tags;
-            blogPost.Comments = request.Comments;
+            
+            _blogPostRepository.Update(blogPost);
 
-            var updatedBlogPost = await _fakeDataStore.UpdateBlogPost(blogPost);
-
-            return new UpdateResponse
-            {
-                Id = updatedBlogPost.Id,
-                Title = updatedBlogPost.Title,
-                Text = updatedBlogPost.Text,
-                CreatedAt = updatedBlogPost.CreatedAt,
-                CreatedBy = updatedBlogPost.CreatedBy,
-                Tags = updatedBlogPost.Tags,
-                Comments = updatedBlogPost.Comments,
-            };
+            return new UpdateResponse { Id = blogPost.Id };
         }
     }
 }

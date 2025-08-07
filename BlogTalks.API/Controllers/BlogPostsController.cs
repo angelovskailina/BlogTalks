@@ -26,56 +26,33 @@ namespace BlogTalks.API.Controllers
 
         // GET api/<BlogPostsController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get([FromRoute] GetByIdRequest request)
+        public async Task<ActionResult> Get([FromRoute] int id)
         {
-            try
-            {
-                var blogpost = await _mediator.Send(request);
-                return Ok(blogpost);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var response = await _mediator.Send(new GetByIdRequest(id));
+            return Ok(response);
         }
 
         // POST api/<BlogPostsController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] AddResponse response)
+        public async Task<ActionResult> Post([FromBody] AddRequest request)
         {
-            await _mediator.Send(new AddRequest(response));
+            var response = await _mediator.Send(request);
             return Ok(response);
         }
 
         // PUT api/<BlogPostsController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] UpdateRequest request)
+        public ActionResult Put([FromRoute] int id, [FromBody] UpdateRequest request)
         {
-            try
-            {
-                var updatedBlogpost = _mediator.Send(request);
-                return Ok(updatedBlogpost.Result);
-            }
-            catch (Exception ex) 
-            { 
-                return BadRequest(ex.Message);
-            }
-
+            var result = _mediator.Send(new UpdateRequest(id, request.Title, request.Text, request.Tags));
+            return Ok(result.Result);
         }
 
         // DELETE api/<BlogPostsController>/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public ActionResult Delete([FromRoute]int id)
         {
-            try
-            {
-                var blogPost = _mediator.Send(new DeleteRequest(id));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var blogPost = _mediator.Send(new DeleteRequest(id));
             return NoContent();
         }
     }

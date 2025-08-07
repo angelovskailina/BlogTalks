@@ -1,24 +1,25 @@
-﻿using MediatR;
+﻿using BlogTalks.Domain.Repositories;
+using MediatR;
 
 namespace BlogTalks.Application.BlogPosts.Commands
 {
     public class DeleteHandler : IRequestHandler<DeleteRequest, DeleteResponse>
     {
-        private readonly FakeDataStore _fakeDataStore;
+        private readonly IBlogPostRepository _blogPostRepository;
 
-        public DeleteHandler(FakeDataStore fakeDataStore)
+        public DeleteHandler(IBlogPostRepository blogPostRepository)
         {
-            _fakeDataStore = fakeDataStore;
+            _blogPostRepository = blogPostRepository;
         }
 
         public async Task<DeleteResponse> Handle(DeleteRequest request, CancellationToken cancellationToken)
         {
-            var blogPost = _fakeDataStore.GetBlogPostById(request.id);
+            var blogPost = _blogPostRepository.GetById(request.id);
             if (blogPost == null)
             {
-                throw new Exception("BlogpPost is null.");
+                return null;
             }
-            await _fakeDataStore.DeleteBlogPost(blogPost.Id);
+            _blogPostRepository.Delete(blogPost);
             return new DeleteResponse();
         }
     }
