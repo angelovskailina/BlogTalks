@@ -6,7 +6,6 @@ namespace BlogTalks.Application.Comments.Queries
     public class GetByIdHandler : IRequestHandler<GetByIdRequest, GetByIdResponse>
     {
         private readonly ICommentRepository _commentRepository;
-
         public GetByIdHandler(ICommentRepository commentRepository)
         {
             _commentRepository = commentRepository;
@@ -14,11 +13,11 @@ namespace BlogTalks.Application.Comments.Queries
 
         public async Task<GetByIdResponse> Handle(GetByIdRequest request, CancellationToken cancellationToken)
         {
-            var comment =  _commentRepository.GetById(request.id);
+            var comment = _commentRepository.GetById(request.id);
 
             if (comment == null)
             {
-                return null; 
+                return null;
             }
             return new GetByIdResponse
             {

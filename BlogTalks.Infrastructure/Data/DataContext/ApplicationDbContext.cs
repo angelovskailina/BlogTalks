@@ -6,9 +6,9 @@ namespace BlogTalks.Infrastructure.Data.DataContext
 {
     public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IApplicationDbContext
     {
-        public DbSet<BlogPost> BlogPosts {  get; set; }
-        public DbSet<Comment> Comments {  get; set; }
-
+        public DbSet<BlogPost> BlogPosts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BlogPost>().HasKey(e => e.Id);
@@ -19,6 +19,7 @@ namespace BlogTalks.Infrastructure.Data.DataContext
                 .IsRequired();
 
             modelBuilder.Entity<Comment>().HasKey(e => e.Id);
+            modelBuilder.Entity<User>().HasKey(e => e.Id);
 
             base.OnModelCreating(modelBuilder);
         }

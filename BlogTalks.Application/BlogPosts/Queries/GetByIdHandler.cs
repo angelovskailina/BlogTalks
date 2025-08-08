@@ -6,7 +6,6 @@ namespace BlogTalks.Application.BlogPosts.Queries
     public class GetByIdHandler : IRequestHandler<GetByIdRequest, GetByIdResponse>
     {
         private readonly IBlogPostRepository _blogPostRepository;
-
         public GetByIdHandler(IBlogPostRepository blogPostRepository)
         {
             _blogPostRepository = blogPostRepository;

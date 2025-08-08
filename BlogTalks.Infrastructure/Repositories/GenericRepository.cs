@@ -29,7 +29,7 @@ namespace BlogTalks.Infrastructure.Repositories
 
         public IEnumerable<TEntity> GetAll() => _dbSet;
 
-        public TEntity GetById(int id) => _dbSet.Find(id);
+        public TEntity? GetById(int id) => _dbSet.Find(id);
 
         public void Update(TEntity entity)
         {

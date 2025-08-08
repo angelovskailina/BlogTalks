@@ -12,10 +12,8 @@ namespace BlogTalks.Application.BlogPosts.Commands
         {
             _blogPostRepository = blogPostRepository;
         }
-
         public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
         {
-
             var blogPost = new BlogPost
             {
                 Title = request.Title,
@@ -23,11 +21,10 @@ namespace BlogTalks.Application.BlogPosts.Commands
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = 55,
                 Tags = request.Tags,
-                
+
             };
             _blogPostRepository.Add(blogPost);
             return new AddResponse { Id = blogPost.Id };
         }
-
     }
 }

@@ -22,6 +22,7 @@ namespace BlogTalks.Infrastructure
             services.AddScoped<ApplicationDbContext>();
             services.AddTransient<IBlogPostRepository, BlogPostRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             return services;
         }

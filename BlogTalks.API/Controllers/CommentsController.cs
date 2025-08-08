@@ -3,8 +3,6 @@ using BlogTalks.Application.Comments.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BlogTalks.API.Controllers
 {
     [Route("api/[controller]")]
@@ -14,8 +12,6 @@ namespace BlogTalks.API.Controllers
         private readonly IMediator _mediator;
         public CommentsController(IMediator mediator) => _mediator = mediator;
 
-
-        // GET: api/<CommentsController>
         [HttpGet("blogpost/{id}/comments")]
         public async Task<ActionResult> GetByBlogPostId([FromRoute] int id)
         {
@@ -23,8 +19,6 @@ namespace BlogTalks.API.Controllers
             return Ok(comments);
         }
 
-
-        // GET api/<CommentsController>/5
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult> Get([FromRoute] int id)
         {
@@ -32,18 +26,6 @@ namespace BlogTalks.API.Controllers
             return Ok(comment);
         }
 
-        // GET api/<CommentsController>/5
-        //[HttpGet]
-        //public async Task<ActionResult> GetAll()
-        //{
-
-        //    var comment = await _mediator.Send(new GetAllRe;
-
-        //    return Ok(comment);
-
-        //}
-
-        // POST api/<CommentsController>
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] AddRequest request)
         {
@@ -55,7 +37,6 @@ namespace BlogTalks.API.Controllers
             return Ok(response);
         }
 
-        // PUT api/<CommentsController>/5
         [HttpPut("{id}")]
         public ActionResult Put([FromRoute] int id, [FromBody] UpdateRequest request)
         {
@@ -68,7 +49,6 @@ namespace BlogTalks.API.Controllers
 
         }
 
-        // DELETE api/<CommentsController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {

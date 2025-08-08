@@ -6,7 +6,6 @@ namespace BlogTalks.Application.Comments.Queries
     public class GetAllByBlogPostIdHandler : IRequestHandler<GetAllByBlogPostIdRequest, List<GetAllByBlogPostIdResponse>>
     {
         private readonly ICommentRepository _commentRepository;
-
         public GetAllByBlogPostIdHandler(ICommentRepository commentRepository)
         {
             _commentRepository = commentRepository;

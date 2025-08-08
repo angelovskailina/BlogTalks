@@ -3,14 +3,13 @@ using MediatR;
 
 namespace BlogTalks.Application.Comments.Commands
 {
-    public class DeleteHandler : IRequestHandler<DeleteRequest,DeleteResponse>
+    public class DeleteHandler : IRequestHandler<DeleteRequest, DeleteResponse>
     {
         public readonly ICommentRepository _commentRepository;
         public DeleteHandler(ICommentRepository commentRepository)
         {
             _commentRepository = commentRepository;
         }
-
         public async Task<DeleteResponse> Handle(DeleteRequest request, CancellationToken cancellationToken)
         {
             var comment = _commentRepository.GetById(request.id);
@@ -20,7 +19,6 @@ namespace BlogTalks.Application.Comments.Commands
             }
             _commentRepository.Delete(comment);
 
-            //return Task.FromResult(new resposne)
             return new DeleteResponse();
         }
     }

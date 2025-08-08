@@ -11,7 +11,6 @@ namespace BlogTalks.Application.Comments.Commands
         {
             _commentRepository = commentRepository;
         }
-
         public async Task<UpdateResponse> Handle(UpdateRequest request, CancellationToken cancellationToken)
         {
             var comment = _commentRepository.GetById(request.Id);
@@ -23,7 +22,7 @@ namespace BlogTalks.Application.Comments.Commands
             comment.Text = request.Text;
             comment.CreatedAt = DateTime.UtcNow;
 
-             _commentRepository.Update(comment);
+            _commentRepository.Update(comment);
 
             return new UpdateResponse
             {
@@ -33,8 +32,6 @@ namespace BlogTalks.Application.Comments.Commands
                 CreatedBy = comment.CreatedBy,
                 BlogPostID = comment.BlogPostID,
             };
-            //return Task.FromResult(new UpdateResponse());
-
         }
     }
 }
