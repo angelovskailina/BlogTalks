@@ -1,7 +1,6 @@
 ﻿using BlogTalks.Domain.Entities;
 using BlogTalks.Domain.Repositories;
 using BlogTalks.Infrastructure.Data.DataContext;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlogTalks.Infrastructure.Repositories
 {

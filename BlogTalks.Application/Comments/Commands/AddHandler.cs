@@ -4,17 +4,15 @@ using MediatR;
 
 namespace BlogTalks.Application.Comments.Commands
 {
-    public class AddHandler : IRequestHandler<AddRequest,AddResponse>
+    public class AddHandler : IRequestHandler<AddRequest, AddResponse>
     {
         private readonly IBlogPostRepository _blogPostRepository;
         public readonly ICommentRepository _commentRepository;
-
         public AddHandler(IBlogPostRepository blogPostRepository, ICommentRepository commentRepository)
         {
             _blogPostRepository = blogPostRepository;
             _commentRepository = commentRepository;
         }
-
         public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
         {
             var blogPost = _blogPostRepository.GetById(request.blogPostId);
@@ -32,7 +30,6 @@ namespace BlogTalks.Application.Comments.Commands
             };
             _commentRepository.Add(comment);
             return new AddResponse { Id = comment.Id };
-           // return new AddResponse{ Id = comment.Id };
         }
     }
 }

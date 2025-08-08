@@ -11,7 +11,6 @@ namespace BlogTalks.Application.BlogPosts.Queries
         {
             _blogPostRepository = blogPostRepository;
         }
-
         public async Task<IEnumerable<GetAllResponse>> Handle(GetAllRequest request, CancellationToken cancellationToken)
         {
             var blogposts = _blogPostRepository.GetAll();

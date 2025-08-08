@@ -11,7 +11,6 @@ namespace BlogTalks.Application.BlogPosts.Commands
         {
             _blogPostRepository = blogPostRepository;
         }
-
         public async Task<UpdateResponse> Handle(UpdateRequest request, CancellationToken cancellationToken)
         {
             var blogPost = _blogPostRepository.GetById(request.Id);
@@ -19,12 +18,10 @@ namespace BlogTalks.Application.BlogPosts.Commands
             {
                 return null;
             }
-
             blogPost.Title = request.Title;
             blogPost.Text = request.Text;
-            //blogPost.CreatedAt = DateTime.UtcNow;
             blogPost.Tags = request.Tags;
-            
+
             _blogPostRepository.Update(blogPost);
 
             return new UpdateResponse { Id = blogPost.Id };

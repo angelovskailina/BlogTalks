@@ -1,11 +1,7 @@
-﻿using BlogTalks.Domain.Entities;
-
-namespace BlogTalks.Application.BlogPosts.Commands
+﻿namespace BlogTalks.Application.BlogPosts.Commands
 {
     public class AddResponse
     {
         public int Id { get; set; }
-         
-
     }
 }
