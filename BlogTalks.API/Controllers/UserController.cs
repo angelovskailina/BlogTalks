@@ -1,4 +1,5 @@
 ﻿using BlogTalks.Application.Users.Commands;
+using BlogTalks.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,38 +14,30 @@ namespace BlogTalks.API.Controllers
 
         public UserController(IMediator mediator) => _mediator = mediator;
 
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterRequest request)
         {
             try
             {
                 var response = await _mediator.Send(request);
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (BlogTalksException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)ex.StatusCode, new { error = ex.Message });
             }
         }
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
             try
             {
                 var response = await _mediator.Send(request);
-                if (response == null)
-                {
-                    return NotFound();
-                }
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (BlogTalksException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)ex.StatusCode, new { error = ex.Message });
             }
         }
     }

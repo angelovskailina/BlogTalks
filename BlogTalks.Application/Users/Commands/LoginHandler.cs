@@ -1,6 +1,8 @@
-﻿using BlogTalks.Domain.Repositories;
+﻿using BlogTalks.Domain.Exceptions;
+using BlogTalks.Domain.Repositories;
 using BlogTalks.Domain.Shared;
 using MediatR;
+using System.Net;
 
 namespace BlogTalks.Application.Users.Commands
 {
@@ -18,12 +20,11 @@ namespace BlogTalks.Application.Users.Commands
             var user = _userRepository.GetUsername(request.Username);
             if (user == null)
             {
-                throw new Exception("Invalid username");
+                throw new BlogTalksException("Invalid username",HttpStatusCode.Unauthorized);
             }
-
             if (!PasswordHasher.VerifyPassword(request.Password, user.Password))
             {
-                throw new Exception("Invalid password");
+                throw new BlogTalksException("Unsuccessful", HttpStatusCode.Unauthorized);
             }
             _userRepository.Login(request.Username, request.Password);
             return new LoginResponse("", "");

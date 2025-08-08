@@ -1,6 +1,8 @@
-﻿using BlogTalks.Domain.Repositories;
+﻿using BlogTalks.Domain.Exceptions;
+using BlogTalks.Domain.Repositories;
 using BlogTalks.Domain.Shared;
 using MediatR;
+using System.Net;
 
 namespace BlogTalks.Application.Users.Commands
 {
@@ -16,14 +18,14 @@ namespace BlogTalks.Application.Users.Commands
             var user = _userRepository.GetUsername(request.Username);
             if (user != null)
             {
-                throw new Exception("Username already in use!");
+                throw new BlogTalksException("Username already in use!", HttpStatusCode.Unauthorized);
             }
 
             var registeredUser = _userRepository.Register(request.Username, request.Password,request.Name,request.Email);
 
             if (registeredUser == null)
             {
-                throw new Exception("User not registered");
+                throw new BlogTalksException("User not registered", HttpStatusCode.Unauthorized);
             }
             return new RegisterResponse(Message:"Registered user");
         }

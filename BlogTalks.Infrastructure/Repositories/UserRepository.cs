@@ -14,29 +14,17 @@ namespace BlogTalks.Infrastructure.Repositories
         public User? GetUsername(string username)
         {
             return _dbSet.Where(u =>  u.Username == username).FirstOrDefault();
-           // _context.Users.Where()
         }
 
         public User? Login(string username, string password)
         {
             var user = _dbSet.FirstOrDefault(u => username.Equals(username));
-            if (user == null)
-            {
-                return null;
-            }
+            
             var passwordVerified = PasswordHasher.VerifyPassword(password, user.Password);
-            if (!passwordVerified)
-            {
-                return null;
-            }
             return user;
         }
         public User? Register(string username, string password, string name,string email)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            {
-                return null;
-            }
             var user = new User
             {
                 Username = username,
