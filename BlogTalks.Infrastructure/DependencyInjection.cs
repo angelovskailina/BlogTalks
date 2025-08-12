@@ -43,9 +43,9 @@ namespace BlogTalks.Infrastructure
                    options.SaveToken = true;
                    options.TokenValidationParameters = new TokenValidationParameters
                    {
-                       ValidateIssuer = jwtSettings.ValidateIssuer,
-                       ValidateAudience = jwtSettings.ValidateAudience,
-                       ValidateLifetime = jwtSettings.ValidateLifetime,
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
                        ValidateIssuerSigningKey = true,
                        ValidIssuer = jwtSettings.Issuer,
                        ValidAudience = jwtSettings.Audience,
