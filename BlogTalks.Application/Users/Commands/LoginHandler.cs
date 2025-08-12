@@ -29,8 +29,8 @@ namespace BlogTalks.Application.Users.Commands
             {
                 throw new BlogTalksException("Unsuccessful", HttpStatusCode.Unauthorized);
             }
-            var token = _authenticationService.CreateToken(user);
             _userRepository.Login(request.Username, request.Password);
+            var token = _authenticationService.CreateToken(user);
             return new LoginResponse(token, "");
         }
     }

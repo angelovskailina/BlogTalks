@@ -20,14 +20,14 @@ namespace BlogTalks.Application.BlogPosts.Commands
         public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
         {
             var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
-        
+            int? userIdValue = int.TryParse(userIdClaim?.Value, out var parsedUserId) ? parsedUserId : null;
+
             var blogPost = new BlogPost
             {
                 Title = request.Title,
                 Text = request.Text,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = userId,
+                CreatedBy = userIdValue.Value,
                 Tags = request.Tags,
 
             };

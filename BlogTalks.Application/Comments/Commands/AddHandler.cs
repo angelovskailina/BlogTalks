@@ -22,7 +22,7 @@ namespace BlogTalks.Application.Comments.Commands
         public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
         {
             var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            var userId = userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+            int? userIdValue = int.TryParse(userIdClaim?.Value, out var parsedUserId) ? parsedUserId : null;
 
             var blogPost = _blogPostRepository.GetById(request.blogPostId);
             if (blogPost == null)
@@ -35,7 +35,7 @@ namespace BlogTalks.Application.Comments.Commands
                 BlogPost = blogPost,
                 Text = request.Text,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = userId,
+                CreatedBy = userIdValue.Value,
             };
             _commentRepository.Add(comment);
             return new AddResponse { Id = comment.Id };
