@@ -1,10 +1,15 @@
-﻿using BlogTalks.Domain.Repositories;
+﻿using BlogTalks.Application.Abstractions;
+using BlogTalks.Domain.Repositories;
+using BlogTalks.Infrastructure.Authentication;
 using BlogTalks.Infrastructure.Data.DataContext;
 using BlogTalks.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BlogTalks.Infrastructure
 {
@@ -23,6 +28,35 @@ namespace BlogTalks.Infrastructure
             services.AddTransient<IBlogPostRepository, BlogPostRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+
+
+            var jwtSettingsSection = configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(jwtSettingsSection);
+
+            var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+            var secretKey = Encoding.UTF8.GetBytes(jwtSettings.Secret);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+               {
+                   options.RequireHttpsMetadata = false;
+                   options.SaveToken = true;
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = jwtSettings.Issuer,
+                       ValidAudience = jwtSettings.Audience,
+                       IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+                       ClockSkew = TimeSpan.Zero
+                   };
+               });
+
+            services.AddAuthorization();
+
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
 
             return services;
         }

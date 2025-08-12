@@ -13,15 +13,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.FullName);
-});
 
-//builder.Services.AddSingleton<FakeDataStore>();
+});
 
 builder.Services
         .AddPresentation()
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
 
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -34,6 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

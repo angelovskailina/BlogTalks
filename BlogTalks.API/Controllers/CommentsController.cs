@@ -1,10 +1,12 @@
 ﻿using BlogTalks.Application.Comments.Commands;
 using BlogTalks.Application.Comments.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogTalks.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CommentsController : ControllerBase

@@ -1,4 +1,5 @@
-﻿using BlogTalks.Domain.Exceptions;
+﻿using BlogTalks.Application.Abstractions;
+using BlogTalks.Domain.Exceptions;
 using BlogTalks.Domain.Repositories;
 using BlogTalks.Domain.Shared;
 using MediatR;
@@ -9,10 +10,12 @@ namespace BlogTalks.Application.Users.Commands
     public class LoginHandler : IRequestHandler<LoginRequest, LoginResponse>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public LoginHandler(IUserRepository userRepository)
+        public LoginHandler(IUserRepository userRepository, IAuthenticationService authenticationService)
         {
             _userRepository = userRepository;
+            _authenticationService = authenticationService;
         }
 
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
@@ -27,7 +30,8 @@ namespace BlogTalks.Application.Users.Commands
                 throw new BlogTalksException("Unsuccessful", HttpStatusCode.Unauthorized);
             }
             _userRepository.Login(request.Username, request.Password);
-            return new LoginResponse("", "");
+            var token = _authenticationService.CreateToken(user);
+            return new LoginResponse(token, "");
         }
     }
 }
