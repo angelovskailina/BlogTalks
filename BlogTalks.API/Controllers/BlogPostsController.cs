@@ -11,8 +11,14 @@ namespace BlogTalks.API.Controllers
     [ApiController]
     public class BlogPostsController : ControllerBase
     {
+        private readonly ILogger<UserController> _logger;
         private readonly IMediator _mediator;
-        public BlogPostsController(IMediator mediator) => _mediator = mediator;
+
+        public BlogPostsController(ILogger<UserController> logger, IMediator mediator)
+        {
+            _logger = logger;
+            _mediator = mediator;
+        }
 
         [AllowAnonymous]
         [HttpGet]
@@ -32,6 +38,7 @@ namespace BlogTalks.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] AddRequest request)
         {
+            _logger.LogInformation("----- New created blogpost received.");
             var response = await _mediator.Send(request);
             return Ok(response);
         }
@@ -46,6 +53,8 @@ namespace BlogTalks.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
+            _logger.LogInformation("----- Deleted blogpost.");
+
             var blogPost = _mediator.Send(new DeleteRequest(id));
             return NoContent();
         }
