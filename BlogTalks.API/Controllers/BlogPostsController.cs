@@ -22,10 +22,17 @@ namespace BlogTalks.API.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult<GetAllResponse>> Get([FromQuery] int? pageNumber, int? pageSize, string? searchWord, string? tag)
         {
-            var blogPosts = await _mediator.Send(new GetAllRequest());
-            return Ok(blogPosts);
+            var request = new GetAllRequest
+            {
+                PageNumber = pageNumber ?? 1,
+                PageSize = pageSize ?? 10,
+                SearchWord = searchWord,
+                Tag = tag,
+            };
+            var list = await _mediator.Send(request);
+            return Ok(list);
         }
 
         [HttpGet("{id}")]
