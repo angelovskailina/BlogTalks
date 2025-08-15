@@ -2,5 +2,11 @@
 
 namespace BlogTalks.Application.BlogPosts.Queries
 {
-    public record GetAllRequest : IRequest<IEnumerable<GetAllResponse>>;
+    public class GetAllRequest : IRequest<GetAllResponse>
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public string? SearchWord { get; set; }
+        public string? Tag { get; set; }
+    }
 }

@@ -7,5 +7,6 @@ namespace BlogTalks.Domain.Repositories
         User? Login(string username, string password);
         User? Register(string username, string password, string name,string email);
         User? GetUsername(string username);
+        IEnumerable<User> GetUsersByIds(IEnumerable<int> ids);
     }
 }

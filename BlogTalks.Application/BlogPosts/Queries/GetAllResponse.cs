@@ -1,15 +1,11 @@
-﻿using BlogTalks.Domain.Entities;
+﻿using BlogTalks.Application.Contracts;
+using BlogTalks.Domain.Entities;
 
 namespace BlogTalks.Application.BlogPosts.Queries
 {
     public class GetAllResponse
     {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
-        public int CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public List<string> Tags { get; set; } = new List<string>();
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+        public List<BlogPostModel> BlogPosts { get; set; } = new List<BlogPostModel>();
+        public Metadata Metadata { get; set; }
     }
 }
