@@ -3,6 +3,7 @@ using BlogTalks.API.Middlewares;
 using BlogTalks.Application;
 using BlogTalks.Infrastructure;
 using Serilog;
+using System.Buffers.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,11 @@ builder.Services
         .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddHttpClient("EmailSenderApi", client =>
+{
+    var config = builder.Configuration.GetSection("Services:EmailSenderApi");
+    client.BaseAddress = new Uri(config["Url"]);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
