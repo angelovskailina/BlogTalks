@@ -1,5 +1,7 @@
-﻿using BlogTalks.Domain.Repositories;
+﻿using BlogTalks.Domain.Exceptions;
+using BlogTalks.Domain.Repositories;
 using MediatR;
+using System.Net;
 
 namespace BlogTalks.Application.BlogPosts.Queries
 {
@@ -16,7 +18,7 @@ namespace BlogTalks.Application.BlogPosts.Queries
             var blogPost = _blogPostRepository.GetById(request.Id);
             if (blogPost == null)
             {
-                return null;
+                throw new BlogTalksException($"Blog post with Id {request.Id} not found.", HttpStatusCode.NotFound);
             }
             return new GetByIdResponse
             {

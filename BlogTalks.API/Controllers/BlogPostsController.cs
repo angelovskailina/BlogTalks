@@ -51,18 +51,18 @@ namespace BlogTalks.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put([FromRoute] int id, [FromBody] UpdateRequest request)
+        public async Task<ActionResult> Put([FromRoute] int id, [FromBody] UpdateRequest request)
         {
-            var result = _mediator.Send(new UpdateRequest(id, request.Title, request.Text, request.Tags));
-            return Ok(result.Result);
+            var result = await _mediator.Send(new UpdateRequest(id, request.Title, request.Text, request.Tags));
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete([FromRoute] int id)
+        public async Task<ActionResult> Delete([FromRoute] int id)
         {
             _logger.LogInformation("----- Deleted blogpost.");
 
-            var blogPost = _mediator.Send(new DeleteRequest(id));
+            var blogPost = await _mediator.Send(new DeleteRequest(id));
             return NoContent();
         }
     }
