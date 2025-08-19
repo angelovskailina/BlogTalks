@@ -1,7 +1,9 @@
-﻿using BlogTalks.Domain.Repositories;
+﻿using System.Net;
+using BlogTalks.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using BlogTalks.Domain.Exceptions;
 
 namespace BlogTalks.Application.BlogPosts.Commands
 {
@@ -21,7 +23,7 @@ namespace BlogTalks.Application.BlogPosts.Commands
             var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
-                throw new UnauthorizedAccessException("User is not authenticated.");
+                throw new BlogTalksException("User is not authenticated.",HttpStatusCode.NotFound);
             }
 
             int loggedInUserId = int.Parse(userIdClaim.Value);
@@ -29,12 +31,13 @@ namespace BlogTalks.Application.BlogPosts.Commands
             var blogPost = _blogPostRepository.GetById(request.Id);
             if (blogPost == null)
             {
-                return null;
+                throw new BlogTalksException("BlogPost does not exist!", HttpStatusCode.NotFound);
+
             }
 
             if (blogPost.CreatedBy != loggedInUserId)
             {
-                throw new UnauthorizedAccessException("You can only update your own blog posts.");
+                throw new BlogTalksException("You can only update your own blog posts.",HttpStatusCode.NotFound);
             }
 
             blogPost.Title = request.Title;

@@ -25,7 +25,7 @@ namespace BlogTalks.API.Middlewares
                 {
                     Status = StatusCodes.Status400BadRequest,
                     Type = "ValidationFailure",
-                    Title = "Balidation error",
+                    Title = "Validation error",
                     Detail = "One or more validation errors has occured",
                 };
 

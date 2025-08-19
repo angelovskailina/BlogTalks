@@ -4,7 +4,7 @@ namespace BlogTalks.Domain.Exceptions
 {
     public class BlogTalksException : Exception
     {
-        public HttpStatusCode StatusCode { get; set; }
+        public HttpStatusCode StatusCode { get; }
 
         public BlogTalksException(string message, HttpStatusCode statusCode) : base(message) 
         {
