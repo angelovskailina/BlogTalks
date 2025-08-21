@@ -1,62 +1,76 @@
-﻿using BlogTalks.Domain.Entities;
+﻿using BlogTalks.Application.Abstractions;
+using BlogTalks.Application.Contracts;
+using BlogTalks.Domain.Entities;
 using BlogTalks.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Net.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement;
 using System.Security.Claims;
 
-namespace BlogTalks.Application.Comments.Commands
+namespace BlogTalks.Application.Comments.Commands;
+
+public class AddHandler(
+    IBlogPostRepository blogPostRepository,
+    ICommentRepository commentRepository,
+    IHttpContextAccessor httpContextAccessor,
+    IHttpClientFactory httpClientFactory,
+    IUserRepository userRepository,
+    IFeatureManager featureManager,
+    IServiceProvider serviceProvider,
+    ILogger<AddHandler> logger)
+    : IRequestHandler<AddRequest, AddResponse>
 {
-    public class AddHandler : IRequestHandler<AddRequest, AddResponse>
+    public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
     {
-        private readonly IBlogPostRepository _blogPostRepository;
-        private readonly ICommentRepository _commentRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IUserRepository _userRepository;
+        var userIdClaim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+        int? userIdValue = int.TryParse(userIdClaim?.Value, out var parsedUserId) ? parsedUserId : null;
 
-        public AddHandler(IBlogPostRepository blogPostRepository, ICommentRepository commentRepository, IHttpContextAccessor httpContextAccessor, IHttpClientFactory httpClientFactory, IUserRepository userRepository)
+        var blogPost = blogPostRepository.GetById(request.blogPostId);
+        var comment = new Comment
         {
-            _blogPostRepository = blogPostRepository;
-            _commentRepository = commentRepository;
-            _httpContextAccessor = httpContextAccessor;
-            _httpClientFactory = httpClientFactory;
-            _userRepository = userRepository;
+            BlogPostID = request.blogPostId,
+            BlogPost = blogPost,
+            Text = request.Text,
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = userIdValue.Value,
+        };
+        commentRepository.Add(comment);
+
+        var blogpostCreator = userRepository.GetById(blogPost.CreatedBy);
+        var commentCreator = userRepository.GetById(userIdValue.Value);
+
+        await SendEmail(commentCreator, blogpostCreator, blogPost);
+
+        return new AddResponse { Id = comment.Id };
+    }
+
+    private async Task SendEmail(User commentCreator, User blogpostCreator, BlogPost blogPost)
+    {
+        var dto = new EmailDto()
+        {
+            From = commentCreator.Email,
+            To = blogpostCreator.Email,
+            Subject = "New Comment Added",
+            Body =
+                $"A new comment has been added to the blog post '{blogPost.Title}' by user {commentCreator.Name}."
+        };
+
+        if (await featureManager.IsEnabledAsync("EmailHttpSender"))
+        {
+            var service = serviceProvider.GetRequiredKeyedService<IMessagingService>("MessagingHttpService");
+            await service.Send(dto);
+
         }
-
-        public async Task<AddResponse> Handle(AddRequest request, CancellationToken cancellationToken)
+        else if (await featureManager.IsEnabledAsync("EmailRabbitMQSender"))
         {
-            var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            int? userIdValue = int.TryParse(userIdClaim?.Value, out var parsedUserId) ? parsedUserId : null;
-
-            var blogPost = _blogPostRepository.GetById(request.blogPostId);
-            if (blogPost == null)
-            {
-                return null;
-            }
-            var comment = new Comment
-            {
-                BlogPostID = request.blogPostId,
-                BlogPost = blogPost,
-                Text = request.Text,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = userIdValue.Value,
-            };
-            _commentRepository.Add(comment);
-
-            var httpClient = _httpClientFactory.CreateClient("EmailSenderApi");
-            var blogpostCreator = _userRepository.GetById(blogPost.CreatedBy);
-            var commentCreator = _userRepository.GetById(userIdValue.Value);
-
-            var dto = new
-            {
-                From = commentCreator.Email,
-                To = blogpostCreator.Email,
-                Subject = "New Comment Added",
-                Body = $"A new comment has been added to the blog post '{blogPost.Title}' by user {commentCreator.Name}."
-            };
-            await httpClient.PostAsJsonAsync("/email", dto, cancellationToken);
-            return new AddResponse { Id = comment.Id };
+            var service = serviceProvider.GetRequiredKeyedService<IMessagingService>("MessagingRabbitMQService");
+            await service.Send(dto);
+        }
+        else
+        {
+            logger.LogError("No email sender feature flag is enabled. Email will not be sent.");
         }
     }
 }

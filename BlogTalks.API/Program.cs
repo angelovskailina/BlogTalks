@@ -2,8 +2,8 @@ using BlogTalks.API;
 using BlogTalks.API.Middlewares;
 using BlogTalks.Application;
 using BlogTalks.Infrastructure;
+using Microsoft.FeatureManagement;
 using Serilog;
-using System.Buffers.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +38,9 @@ builder.Services.AddHttpClient("EmailSenderApi", client =>
     var config = builder.Configuration.GetSection("Services:EmailSenderApi");
     client.BaseAddress = new Uri(config["Url"]);
 });
+
+builder.Services.AddFeatureManagement();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
