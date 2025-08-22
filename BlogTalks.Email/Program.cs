@@ -7,7 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.AddHostedService<RabbitMQBackgroundEmailService>();
+
+builder.Services.Configure<RabbitMqSettings>(
+    builder.Configuration.GetSection("RabbitMqSettings"));
+
+builder.Services.AddSingleton(builder.Configuration.GetSection("RabbitMqSettings").Get<RabbitMqSettings>());
 
 var app = builder.Build();
 
