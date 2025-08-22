@@ -1,11 +1,10 @@
-﻿namespace BlogTalks.Email.DTOs
+﻿namespace BlogTalks.Email.DTOs;
+
+public class EmailDto
 {
-    public class EmailDto
-    {
-        public string From { get; set; } = String.Empty;
-        public string To { get; set; } = String.Empty;
-        public string Subject { get; set; } = String.Empty;
-        public string Body { get; set; } = String.Empty;
-        
-    }
+    public string From { get; set; } = string.Empty;
+    public string To { get; set; } = string.Empty;
+    public string Subject { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+
 }
